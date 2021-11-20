@@ -4,16 +4,6 @@ import BookChanger from "./BookChanger";
 import BookAuthor from "./BookAuthor";
 
 class Book extends React.Component {
-  // state = {
-  //   myBook: {},
-  //   onShelfChange:
-  // };
-
-  // constructor(props) {
-  //   super(props);
-  //   this.state.myBook = props.book;
-  // }
-
   render() {
     const { book, onShelfChange } = this.props;
     return (

@@ -8,9 +8,8 @@ import Search from "./Search";
 
 class BooksApp extends React.Component {
   state = {
-    currentlyReading: [],
-    wantToRead: [],
-    read: [],
+    allBooks: [],
+    update: false,
   };
 
   componentDidMount() {
@@ -18,54 +17,17 @@ class BooksApp extends React.Component {
   }
 
   getBooksData = () => {
-    this.clearShelfs();
     BooksAPI.getAll().then((books) => {
-      books.map((book) => this.organizeBooks(book));
+      this.setState({ allBooks: books });
     });
-  };
-
-  clearShelfs = () => {
-    this.setState({
-      currentlyReading: [],
-      wantToRead: [],
-      read: [],
-    });
-  };
-
-  organizeBooks = (book) => {
-    this.setState((prevState) => ({
-      [book.shelf]: [...prevState[book.shelf], book],
-    }));
   };
 
   onShelfChange = (e, book) => {
-    // if (book.shelf) {
-    //   this.removeFromShelf(book);
-    // }
-    // const newBook = this.updateShelf(book, e.target.value);
-    // this.addToShelf(newBook);
-    BooksAPI.update(book, e.target.value).then(() => this.getBooksData());
+    BooksAPI.update(book, e.target.value).then((res) => {
+      console.log(res);
+      this.getBooksData();
+    });
   };
-
-  // removeFromShelf = (book) => {
-  //   this.setState((prevState) => ({
-  //     [book.shelf]: prevState[book.shelf].filter((b) => b.id !== book.id),
-  //   }));
-  // };
-
-  // updateShelf = (book, shelf) => {
-  //   // Reference for cloning JS Objects => https://www.samanthaming.com/tidbits/70-3-ways-to-clone-objects/
-  //   //  I choose to do (Deep Copy) to be more dynamic if in further development we want to change nested objects
-  //   const newBook = JSON.parse(JSON.stringify(book));
-  //   newBook.shelf = shelf;
-  //   return newBook;
-  // };
-
-  // addToShelf = (book) => {
-  //   this.setState((prevState) => ({
-  //     [book.shelf]: [...prevState[book.shelf], book],
-  //   }));
-  // };
 
   render() {
     return (
@@ -81,17 +43,23 @@ class BooksApp extends React.Component {
                     <div>
                       <BookShelf
                         shelfTitle="Currently Reading"
-                        books={this.state.currentlyReading}
+                        books={this.state.allBooks.filter(
+                          (book) => book.shelf === "currentlyReading"
+                        )}
                         onShelfChange={this.onShelfChange}
                       />
                       <BookShelf
                         shelfTitle="Want To Read"
-                        books={this.state.wantToRead}
+                        books={this.state.allBooks.filter(
+                          (book) => book.shelf === "wantToRead"
+                        )}
                         onShelfChange={this.onShelfChange}
                       />
                       <BookShelf
                         shelfTitle="Read"
-                        books={this.state.read}
+                        books={this.state.allBooks.filter(
+                          (book) => book.shelf === "read"
+                        )}
                         onShelfChange={this.onShelfChange}
                       />
                     </div>
@@ -108,7 +76,12 @@ class BooksApp extends React.Component {
           <Route
             exact
             path="/search"
-            element={<Search onShelfChange={this.onShelfChange} />}
+            element={
+              <Search
+                shelfBooks={this.state.allBooks}
+                onShelfChange={this.onShelfChange}
+              />
+            }
           />
         </Routes>
       </BrowserRouter>

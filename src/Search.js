@@ -10,19 +10,27 @@ class Search extends React.Component {
   };
 
   handleOnChange = (e) => {
-    e.persist();
-    this.setState((prevState) => ({
-      query: e.target.value,
-    }));
-    this.getBooks();
+    // e.persist();
+    const { value } = e.target;
+    if (value.length > 0) {
+      this.setState((prevState) => ({ query: value }));
+      this.getBooks();
+    } else {
+      this.setState((prevState) => ({ query: "", books: [] }));
+    }
   };
 
   getBooks = () => {
     BooksAPI.search(this.state.query).then((resBooks) => {
-      if (resBooks !== undefined) {
-        this.setState((prevState) => ({
-          books: resBooks,
-        }));
+      if (resBooks !== undefined && resBooks.length > 0) {
+        resBooks.forEach((rbook, index) => {
+          this.props.shelfBooks.forEach((sb) => {
+            if (sb.id === rbook.id) {
+              resBooks[index].shelf = sb.shelf;
+            }
+          });
+        });
+        this.setState((prevState) => ({ books: resBooks }));
       }
     });
   };
