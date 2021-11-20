@@ -15,11 +15,10 @@ class BooksApp extends React.Component {
     this.getBooksData();
   }
 
-  getBooksData = () => {
-    BooksAPI.getAll().then((books) => {
-      this.setState({ allBooks: books });
-    });
-  };
+  async getBooksData() {
+    const books = await BooksAPI.getAll();
+    this.setState({ allBooks: books });
+  }
 
   onShelfChange = (e, book) => {
     const { value } = e.target;

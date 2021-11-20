@@ -8,22 +8,17 @@ class Search extends React.Component {
   constructor(props) {
     super(props);
     this.state = { books: [], query: "" };
-    this.shelfBooks = props.shelfBooks;
-    this.onShelfChange = props.onShelfChange;
+    this.shelfBooks = this.props.shelfBooks;
+    this.onShelfChange = this.props.onShelfChange;
   }
 
   handleOnChange = (e) => {
     const { value } = e.target;
-    if (value.length > 0) {
-      this.setState((prevState) => ({ query: value }));
-      this.getBooks();
-    } else {
-      this.setState((prevState) => ({ query: "", books: [] }));
-    }
+    this.setState({ books: [], query: value }, this.getBooks(value));
   };
 
-  getBooks = () => {
-    BooksAPI.search(this.state.query).then((resBooks) => {
+  getBooks = (value) => {
+    BooksAPI.search(value).then((resBooks) => {
       if (resBooks !== undefined && resBooks.length > 0) {
         resBooks.forEach((rbook, index) => {
           this.shelfBooks.forEach((sb) => {
@@ -32,7 +27,7 @@ class Search extends React.Component {
             }
           });
         });
-        this.setState((prevState) => ({ books: resBooks }));
+        this.setState({ books: resBooks });
       }
     });
   };
@@ -65,8 +60,7 @@ class Search extends React.Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {this.state.books &&
-              this.state.books.length > 0 &&
+            {this.state.books.length > 0 &&
               this.state.books.map((myBook) => (
                 <Book
                   key={myBook.id}
