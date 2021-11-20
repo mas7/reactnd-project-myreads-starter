@@ -1,7 +1,13 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 function BookAuthor(props) {
-  return <div className="book-authors">{props.author}</div>;
+  const { author } = props;
+  return <div className="book-authors">{author}</div>;
 }
+
+BookAuthor.propTypes = {
+  author: PropTypes.string.isRequired,
+};
 
 export default BookAuthor;

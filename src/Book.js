@@ -3,37 +3,36 @@ import PropTypes from "prop-types";
 import BookChanger from "./BookChanger";
 import BookAuthor from "./BookAuthor";
 
-class Book extends React.Component {
-  render() {
-    const { book, onShelfChange } = this.props;
-    return (
-      <li>
-        <div className="book">
-          <div className="book-top">
-            <div
-              className="book-cover"
-              style={{
-                width: 128,
-                height: 193,
-                backgroundImage: `url(${book.imageLinks &&
-                  book.imageLinks.smallThumbnail})`,
-              }}
-            />
-            <BookChanger book={book} onShelfChange={onShelfChange} />
-          </div>
-          <div className="book-title">{book.title}</div>
-          {book.authors &&
-            book.authors.map((author, index) => (
-              <BookAuthor key={author + index + book.id} author={author} />
-            ))}
+function Book(props) {
+  const { book, onShelfChange } = props;
+  return (
+    <li>
+      <div className="book">
+        <div className="book-top">
+          <div
+            className="book-cover"
+            style={{
+              width: 128,
+              height: 193,
+              backgroundImage: `url(${book.imageLinks &&
+                book.imageLinks.smallThumbnail})`,
+            }}
+          />
+          <BookChanger book={book} onShelfChange={onShelfChange} />
         </div>
-      </li>
-    );
-  }
+        <div className="book-title">{book.title}</div>
+        {book.authors &&
+          book.authors.map((author, index) => (
+            <BookAuthor key={author + index + book.id} author={author} />
+          ))}
+      </div>
+    </li>
+  );
 }
 
 Book.propTypes = {
-  // book: PropTypes.object.isRequired,
+  book: PropTypes.object.isRequired,
+  onShelfChange: PropTypes.func.isRequired,
 };
 
 export default Book;

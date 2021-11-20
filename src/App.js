@@ -1,15 +1,14 @@
 import React from "react";
-import * as BooksAPI from "./BooksAPI";
 import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
-import "./App.css";
+import * as BooksAPI from "./BooksAPI";
 import AppTitle from "./AppTitle";
 import BookShelf from "./BookShelf";
 import Search from "./Search";
+import "./App.css";
 
 class BooksApp extends React.Component {
   state = {
     allBooks: [],
-    update: false,
   };
 
   componentDidMount() {
@@ -23,8 +22,8 @@ class BooksApp extends React.Component {
   };
 
   onShelfChange = (e, book) => {
-    BooksAPI.update(book, e.target.value).then((res) => {
-      console.log(res);
+    const { value } = e.target;
+    BooksAPI.update(book, value).then((res) => {
       this.getBooksData();
     });
   };

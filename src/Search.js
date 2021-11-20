@@ -1,16 +1,18 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
 import Book from "./Book";
 
 class Search extends React.Component {
-  state = {
-    books: [],
-    query: "",
-  };
+  constructor(props) {
+    super(props);
+    this.state = { books: [], query: "" };
+    this.shelfBooks = props.shelfBooks;
+    this.onShelfChange = props.onShelfChange;
+  }
 
   handleOnChange = (e) => {
-    // e.persist();
     const { value } = e.target;
     if (value.length > 0) {
       this.setState((prevState) => ({ query: value }));
@@ -24,7 +26,7 @@ class Search extends React.Component {
     BooksAPI.search(this.state.query).then((resBooks) => {
       if (resBooks !== undefined && resBooks.length > 0) {
         resBooks.forEach((rbook, index) => {
-          this.props.shelfBooks.forEach((sb) => {
+          this.shelfBooks.forEach((sb) => {
             if (sb.id === rbook.id) {
               resBooks[index].shelf = sb.shelf;
             }
@@ -33,6 +35,16 @@ class Search extends React.Component {
         this.setState((prevState) => ({ books: resBooks }));
       }
     });
+  };
+
+  handleOnShelfChange = (e, book) => {
+    const { value } = e.target;
+    this.state.books.forEach((rbook) => {
+      if (rbook.id === book.id) {
+        rbook.shelf = value;
+      }
+    });
+    this.onShelfChange(e, book);
   };
 
   render() {
@@ -59,7 +71,7 @@ class Search extends React.Component {
                 <Book
                   key={myBook.id}
                   book={myBook}
-                  onShelfChange={this.props.onShelfChange}
+                  onShelfChange={this.handleOnShelfChange}
                 />
               ))}
           </ol>
@@ -68,5 +80,10 @@ class Search extends React.Component {
     );
   }
 }
+
+Search.propTypes = {
+  shelfBooks: PropTypes.array.isRequired,
+  onShelfChange: PropTypes.func.isRequired,
+};
 
 export default Search;
